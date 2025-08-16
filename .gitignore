@@ -21,23 +21,23 @@ wheels/
 *.egg
 
 # 安装文件
-install.py
-setup.py
+# install.py
+# setup.py
 
 # 测试文件
-test.py
+# test.py
 # demo_workflow.py
 # fastapi_test_example.py
-test_process_manager.py
-example_workflow.md
+# test_process_manager.py
+# example_workflow.md
 
 # MCP 相关文件（不使用 MCP 方案）
-process-manager.py
-.kiro/settings/mcp.json
+# process-manager.py
+# .kiro/settings/mcp.json
 
 # 进程管理器运行时文件
-running_processes.json
-process-manager.log
+# running_processes.json
+# process-manager.log
 
 # IDE 和编辑器
 .vscode/

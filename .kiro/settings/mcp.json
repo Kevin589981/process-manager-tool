@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "process-manager": {
+      "command": "python",
+      "args": [
+        "process-manager.py"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "start_process",
+        "stop_process",
+        "list_processes",
+        "get_logs",
+        "wait_healthy"
+      ]
+    }
+  }
+}
