@@ -20,9 +20,11 @@ wheels/
 .installed.cfg
 *.egg
 
-# 安装文件
-install.py
-setup.py
+# PyPI 构建文件
+build/
+dist/
+*.egg-info/
+MANIFEST
 
 # 测试文件
 test.py

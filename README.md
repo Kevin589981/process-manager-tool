@@ -1,57 +1,75 @@
-# Kiro 后台进程管理解决方案
+# Kiro Process Manager
 
-## 问题描述
+[![PyPI version](https://badge.fury.io/py/kiro-process-manager.svg)](https://badge.fury.io/py/kiro-process-manager)
+[![Python Support](https://img.shields.io/pypi/pyversions/kiro-process-manager.svg)](https://pypi.org/project/kiro-process-manager/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-在使用 Kiro 时，当需要启动长期运行的后台服务（如 uvicorn、redis-server 等）并随后运行测试时，Kiro 会因为同步等待进程退出而无限阻塞，导致后续命令无法执行。
+非阻塞后台进程管理工具，专为解决 Kiro IDE 中启动长期运行服务时的阻塞问题而设计。
 
+## 问题背景
 
-当然，你也可以将这个项目引入自己
+在使用 Kiro IDE 时，当需要启动长期运行的后台服务（如 uvicorn、redis-server 等）并随后运行测试时，Kiro 会因为同步等待进程退出而无限阻塞，导致后续命令无法执行。
 
 ## 解决方案
 
-本项目提供了一个简单而有效的进程管理脚本 `simple_process_manager.py`，可以在 Kiro 中实现非阻塞的后台服务管理。
+Kiro Process Manager 提供了一个简单而有效的解决方案，可以在 Kiro 中实现非阻塞的后台服务管理。
 
-## 核心文件
+## 安装
 
-- `simple_process_manager.py` - 主要的进程管理脚本
-- `demo_workflow.py` - 基本功能演示
-- `fastapi_test_example.py` - 针对原始问题的完整解决方案
-- `solution.md` - 详细的技术方案文档
+```bash
+pip install kiro-process-manager
+```
 
 ## 快速开始
 
-### 1. 基本用法
+### 1. 初始化 Kiro 项目（推荐）
+
+如果你在 Kiro 项目中使用，建议先运行初始化命令：
+
+```bash
+kiro-pm init
+```
+
+这会在当前目录创建 `.kiro/steering/process-manager-tool.md` 文件，让 Kiro 自动识别这个工具。
+
+### 2. 基本用法
 
 ```bash
 # 启动后台服务
-python simple_process_manager.py start myapp "uvicorn main:app --port 8000"
+kiro-pm start myapp "uvicorn main:app --port 8000"
 
 # 等待服务就绪
-python simple_process_manager.py wait-healthy 8000
+kiro-pm wait-healthy 8000
 
 # 查看运行的进程
-python simple_process_manager.py list
+kiro-pm list
 
 # 停止服务
-python simple_process_manager.py stop myapp
+kiro-pm stop myapp
 ```
 
-### 2. 完整工作流（解决原始问题）
+### 完整工作流（解决原始问题）
 
 在 Kiro 中执行：
 
 ```bash
-python simple_process_manager.py start api "uvicorn main:app --host 0.0.0.0 --port 8000" && python simple_process_manager.py wait-healthy 8000 30 && pytest tests/integration/ && python simple_process_manager.py stop api
+kiro-pm start api "uvicorn main:app --host 0.0.0.0 --port 8000" && kiro-pm wait-healthy 8000 30 && pytest tests/integration/ && kiro-pm stop api
 ```
 
-### 3. 运行演示
+### 高级用法
 
 ```bash
-# 基本功能演示
-python demo_workflow.py
+# 并行运行多个服务
+kiro-pm start api "uvicorn main:app --port 8000"
+kiro-pm start redis "redis-server --port 6379"
+kiro-pm wait-healthy 8000
+kiro-pm wait-healthy 6379
 
-# FastAPI 测试场景演示
-python fastapi_test_example.py
+# 运行测试
+pytest tests/integration/
+
+# 清理所有服务
+kiro-pm cleanup
 ```
 
 ## 功能特性
@@ -66,20 +84,23 @@ python fastapi_test_example.py
 ## 命令参考
 
 ```bash
+# 初始化 Kiro 项目
+kiro-pm init
+
 # 启动进程
-python simple_process_manager.py start <name> <command>
+kiro-pm start <name> <command>
 
 # 停止进程
-python simple_process_manager.py stop <name> [--force]
+kiro-pm stop <name> [--force]
 
 # 列出所有进程
-python simple_process_manager.py list
+kiro-pm list
 
 # 等待端口就绪
-python simple_process_manager.py wait-healthy <port> [timeout]
+kiro-pm wait-healthy <port> [--timeout SECONDS] [--host HOST]
 
 # 清理所有进程
-python simple_process_manager.py cleanup
+kiro-pm cleanup
 ```
 
 ## 使用场景
@@ -96,6 +117,26 @@ python simple_process_manager.py cleanup
 - 通过 socket 连接检查端口健康状态
 - 支持优雅停止和强制终止
 - 跨平台进程管理（Windows 使用 taskkill，Unix 使用 signal）
+
+## 开发
+
+### 本地安装
+
+```bash
+git clone https://github.com/yourusername/kiro-process-manager.git
+cd kiro-process-manager
+pip install -e .
+```
+
+### 运行测试
+
+```bash
+# 测试基本功能
+kiro-pm start test "python -m http.server 8080"
+kiro-pm wait-healthy 8080
+kiro-pm list
+kiro-pm stop test
+```
 
 ## 贡献
 
