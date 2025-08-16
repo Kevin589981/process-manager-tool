@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 安装文件
+install.py
+setup.py
+
+# 测试文件
+test.py
+# demo_workflow.py
+# fastapi_test_example.py
+test_process_manager.py
+example_workflow.md
+
+# MCP 相关文件（不使用 MCP 方案）
+process-manager.py
+.kiro/settings/mcp.json
+
+# 进程管理器运行时文件
+running_processes.json
+process-manager.log
+
+# IDE 和编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 临时文件
+*.tmp
+*.temp
+*.log
