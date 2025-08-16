@@ -1,106 +1,128 @@
-# Kiro 后台进程管理解决方案
+# Kiro Background Process Management Solution
 
-## 问题描述
+## License
 
-在使用 Kiro 时，当需要启动长期运行的后台服务（如 uvicorn、redis-server 等）并随后运行测试时，Kiro 会因为同步等待进程退出而无限阻塞，导致后续命令无法执行。
+![MIT](https://img.shields.io/badge/License-MIT-blue.svg) MIT License
 
+# Fast Usage
+You can now start using it directly with `pip install kiro-process-manager`.
+```bash
+# Initialize the current directory for Kiro to use
+# This will add a md under .kiro/steering in the current directory for Kiro to automatically use
+kiro-pm init
+# Start a process
+kiro-pm start <name> <command>
 
-当然，你也可以将这个项目引入自己
+# Stop a process
+kiro-pm stop <name> [--force]
 
-## 解决方案
+# List all processes
+kiro-pm list
 
-本项目提供了一个简单而有效的进程管理脚本 `simple_process_manager.py`，可以在 Kiro 中实现非阻塞的后台服务管理。
+# Wait for a port to be ready
+kiro-pm wait-healthy <port> [timeout]
 
-## 核心文件
+# Clean up all processes
+kiro-pm cleanup
+```
 
-- `simple_process_manager.py` - 主要的进程管理脚本
-- `demo_workflow.py` - 基本功能演示
-- `fastapi_test_example.py` - 针对原始问题的完整解决方案
-- `solution.md` - 详细的技术方案文档
+## Problem Description
 
-## 快速开始
+When using Kiro to start long-running background services (such as uvicorn, redis-server, etc.) and then run tests, Kiro will block indefinitely while synchronously waiting for the process to exit, preventing subsequent commands from being executed.
 
-### 1. 基本用法
+Of course, you can also integrate this project into your own.
+
+## Solution
+
+This project provides a simple and effective process management script `simple_process_manager.py` to achieve non-blocking background service management in Kiro.
+
+## Core Files
+
+- `simple_process_manager.py` - The main process management script
+- `demo_workflow.py` - Basic functionality demonstration
+- `fastapi_test_example.py` - A complete solution for the original problem
+- `solution.md` - Detailed technical solution documentation
+
+## Quick Start
+
+### 1. Basic Usage
 
 ```bash
-# 启动后台服务
+# Start a background service
 python simple_process_manager.py start myapp "uvicorn main:app --port 8000"
 
-# 等待服务就绪
+# Wait for the service to be ready
 python simple_process_manager.py wait-healthy 8000
 
-# 查看运行的进程
+# View running processes
 python simple_process_manager.py list
 
-# 停止服务
+# Stop the service
 python simple_process_manager.py stop myapp
 ```
 
-### 2. 完整工作流（解决原始问题）
+### 2. Complete Workflow (Solving the Original Problem)
 
-在 Kiro 中执行：
+Execute in Kiro:
 
 ```bash
 python simple_process_manager.py start api "uvicorn main:app --host 0.0.0.0 --port 8000" && python simple_process_manager.py wait-healthy 8000 30 && pytest tests/integration/ && python simple_process_manager.py stop api
 ```
 
-### 3. 运行演示
+### 3. Running the Demonstration
 
 ```bash
-# 基本功能演示
+# Basic functionality demonstration
 python demo_workflow.py
 
-# FastAPI 测试场景演示
+# FastAPI test scenario demonstration
 python fastapi_test_example.py
 ```
 
-## 功能特性
+## Features
 
-- ✅ **非阻塞启动**: 后台服务不会阻塞后续命令
-- ✅ **健康检查**: 等待端口就绪后再执行测试
-- ✅ **进程管理**: 启动、停止、列表、清理功能
-- ✅ **跨平台**: 支持 Windows/Linux/macOS
-- ✅ **持久化**: 进程信息保存到文件，支持会话恢复
-- ✅ **错误处理**: 完善的异常处理和超时机制
+- ✅ **Non-blocking Start**: Background services will not block subsequent commands
+- ✅ **Health Check**: Wait for the port to be ready before running tests
+- ✅ **Process Management**: Start, stop, list, and clean up functions
+- ✅ **Cross-platform**: Supports Windows/Linux/macOS
+- ✅ **Persistence**: Process information is saved to a file, supporting session recovery
+- ✅ **Error Handling**: Comprehensive exception handling and timeout mechanisms
 
-## 命令参考
+## Command Reference
 
 ```bash
-# 启动进程
+# Start a process
 python simple_process_manager.py start <name> <command>
 
-# 停止进程
+# Stop a process
 python simple_process_manager.py stop <name> [--force]
 
-# 列出所有进程
+# List all processes
 python simple_process_manager.py list
 
-# 等待端口就绪
+# Wait for a port to be ready
 python simple_process_manager.py wait-healthy <port> [timeout]
 
-# 清理所有进程
+# Clean up all processes
 python simple_process_manager.py cleanup
 ```
 
-## 使用场景
+## Use Cases
 
-1. **Web 应用测试**: 启动 FastAPI/Django 应用，运行集成测试
-2. **微服务测试**: 同时启动多个服务，运行端到端测试
-3. **数据库测试**: 启动 Redis/PostgreSQL，运行数据相关测试
-4. **前端开发**: 同时启动前后端服务进行开发调试
+1. **Web Application Testing**: Start FastAPI/Django applications and run integration tests
+2. **Microservices Testing**: Start multiple services simultaneously and run end-to-end tests
+3. **Database Testing**: Start Redis/PostgreSQL and run data-related tests
+4. **Front-end Development**: Start both front-end and back-end services simultaneously for development and debugging
 
-## 技术原理
+## Technical Principles
 
-- 使用 `subprocess.Popen` 非阻塞启动进程
-- 进程信息持久化到 JSON 文件
-- 通过 socket 连接检查端口健康状态
-- 支持优雅停止和强制终止
-- 跨平台进程管理（Windows 使用 taskkill，Unix 使用 signal）
+- Use `subprocess.Popen` to start processes non-blocking
+- Persist process information to a JSON file
+- Check port health status via socket connections
+- Support graceful shutdown and forced termination
+- Cross-platform process management (Windows uses taskkill, Unix uses signal)
 
-## 贡献
+## Contribution
 
-欢迎提交 Issue 和 Pull Request 来改进这个解决方案。
+Contributions are welcome through Issues and Pull Requests to improve this solution.
 
-## 许可证
-
-MIT License
